@@ -1,0 +1,28 @@
+{
+  "appId": "com.gojo.friday.ai",
+  "appName": "FRIDAY AI",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "http://localhost:8000",
+    "cleartext": true,
+    "allowNavigation": ["localhost", "127.0.0.1", "10.0.2.2", "*"]
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "ios": {
+    "contentInset": "always",
+    "allowsLinkPreview": false,
+    "scrollEnabled": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#040810",
+      "showSpinner": false
+    }
+  }
+}

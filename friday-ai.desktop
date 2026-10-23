@@ -1,0 +1,22 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=FRIDAY AI
+GenericName=Tactical Defense AI Assistant
+Comment=Gojo Enterprise Tactical Defense HUD & Dual-Brain Autonomous AI Assistant
+Exec=sh -c "cd $(dirname %k) && ./start.sh"
+Icon=friday-ai
+Terminal=false
+Categories=Utility;Development;Security;Network;AudioVideo;
+Keywords=AI;Assistant;Tactical;HUD;Gojo;Security;Cyber;
+StartupNotify=true
+StartupWMClass=FRIDAY AI
+Actions=OpenHUD;OpenDocs;
+
+[Desktop Action OpenHUD]
+Name=Open Tactical HUD
+Exec=xdg-open http://localhost:8000
+
+[Desktop Action OpenDocs]
+Name=Open API Documentation
+Exec=xdg-open http://localhost:8000/docs

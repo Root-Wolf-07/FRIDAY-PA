@@ -1,0 +1,25 @@
+# Environment & Secrets
+.env
+.env.local
+*.key
+*.pem
+*.token
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+friday.db*
+
+# Build Artifacts
+build/
+dist/
+node_modules/
+.DS_Store

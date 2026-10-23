@@ -1,0 +1,33 @@
+{
+  "name": "fridey-ai-hud",
+  "version": "1.0.0",
+  "description": "FRIDEY - GOJO OS v8.4 Tactical AI Assistant",
+  "main": "index.html",
+  "bin": {
+    "fridey": "./cli.js"
+  },
+  "scripts": {
+    "start": "./start.sh",
+    "dev": "./start.sh",
+    "serve": "./start.sh",
+    "backend": "./start.sh",
+    "frontend:standalone": "python3 -m http.server 4173",
+    "open": "open http://localhost:8000",
+    "cli": "node cli.js",
+    "cli:status": "node cli.js --status",
+    "cli:hud": "node cli.js --web",
+    "install:cli": "npm link"
+  },
+  "keywords": [
+    "fridey",
+    "gojo",
+    "gojo-os",
+    "ai-assistant",
+    "speech-recognition",
+    "speech-synthesis",
+    "hud",
+    "canvas-visualizer"
+  ],
+  "author": "Gojo",
+  "license": "MIT"
+}

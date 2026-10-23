@@ -1,0 +1,51 @@
+"""Database models package."""
+from __future__ import annotations
+
+from app.db.base import Base
+from app.db.models.agent import AgentRun, AgentRunEvent
+from app.db.models.approval import ApprovalRequest
+from app.db.models.audit import AuditEvent
+from app.db.models.capability import CapabilityGrant
+from app.db.models.contact import ContactRecord
+from app.db.models.conversation import Conversation, Message
+from app.db.models.document import DocumentChunk, DocumentIndex
+from app.db.models.memory import MemoryRecord
+from app.db.models.project import Project, ProjectDirectoryGrant
+from app.db.models.schedule import JobExecutionHistory, ScheduledJob
+from app.db.models.security import SecurityFinding, SecurityReport
+from app.db.models.skill import SkillAcquisitionRecord, SkillRecord, SkillVersionRecord
+from app.db.models.task import Task, TaskEvent
+from app.db.models.terminal import TerminalCommandHistory, TerminalSession
+from app.db.models.tool import ToolDefinition, ToolExecutionRecord
+from app.db.models.user_settings import UserSettingsRecord
+
+__all__ = [
+    "Base",
+    "AgentRun",
+    "AgentRunEvent",
+    "CapabilityGrant",
+    "ContactRecord",
+    "Conversation",
+    "Message",
+    "Project",
+    "ProjectDirectoryGrant",
+    "Task",
+    "TaskEvent",
+    "ApprovalRequest",
+    "ToolDefinition",
+    "ToolExecutionRecord",
+    "TerminalSession",
+    "TerminalCommandHistory",
+    "UserSettingsRecord",
+    "MemoryRecord",
+    "DocumentIndex",
+    "DocumentChunk",
+    "ScheduledJob",
+    "JobExecutionHistory",
+    "AuditEvent",
+    "SecurityReport",
+    "SecurityFinding",
+    "SkillRecord",
+    "SkillVersionRecord",
+    "SkillAcquisitionRecord",
+]

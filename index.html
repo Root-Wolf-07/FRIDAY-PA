@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FRIDEY - GOJO OS v8.4 | A.I. Tactical Assistant</title>
+  <meta name="description" content="FRIDEY - Futuristic GOJO OS HUD AI Assistant with Voice Recognition, Speech Synthesis, and Holographic Arc Reactor Telemetry.">
+  <meta name="theme-color" content="#040810">
+
+  <!-- Mobile & PWA Application Meta Tags (Android, iOS, macOS, Linux) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FRIDAY AI">
+  <meta name="application-name" content="FRIDAY AI">
+  <meta name="msapplication-TileColor" content="#040810">
+
+  <!-- Web App Manifest & App Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('[⚡ FRIDAY PWA] Service Worker registered in scope:', reg.scope);
+        }).catch((err) => {
+          console.log('[⚡ FRIDAY PWA] Service Worker registration note:', err);
+        });
+      });
+    }
+  </script>
+</head>
+<body data-theme="stark">
+
+  <!-- Consolidated Single-Layer Digital Neural Communication Background -->
+  <div class="hud-neural-backdrop-layer" id="hudNeuralLayer">
+    <canvas id="neuralBgCanvas" class="neural-bg-canvas" aria-hidden="true"></canvas>
+  </div>
+
+  <!-- Main Application Wrapper -->
+  <div class="hud-app-wrapper">
+
+    <!-- HUD Header Bar -->
+    <header class="hud-header" id="mainHeader">
+      <div class="header-brand">
+        <div class="brand-emblem-wrapper" id="brandEmblemCore" title="FRIDEY Tactical Arc Reactor Core v8.4">
+          <svg class="brand-arc-vector" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" class="arc-ring-outer"/>
+            <circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+            <circle cx="22" cy="22" r="8.5" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1.5" class="arc-core-pulse"/>
+            <polygon points="22,14 28.5,25.5 15.5,25.5" stroke="currentColor" stroke-width="1.3" fill="none" class="arc-tri"/>
+            <circle cx="22" cy="22" r="3" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-title-group">
+          <h1>FRIDEY <span class="brand-tag">OS v8.4</span></h1>
+          <div class="brand-subtext">GOJO ENTERPRISE • TACTICAL DEFENSE HUD</div>
+        </div>
+      </div>
+
+      <!-- Live AI Status Pill -->
+      <div class="header-status-pill" id="headerStatusContainer">
+        <div class="status-dot" id="headerStatusDot"></div>
+        <span id="headerStatusText">SYSTEMS ONLINE</span>
+      </div>
+
+      <!-- Header Actions & Controls -->
+      <div class="header-actions">
+        <!-- Telemetry Clock -->
+        <div class="telemetry-time-box">
+          <span class="time-clock" id="hudTimeClock">00:00:00 LCL</span>
+          <span class="time-date" id="hudTimeDate">INITIALIZING...</span>
+        </div>
+
+        <!-- Language Selector (English, Tamil, Malayalam) -->
+        <select class="theme-select" id="langSelect" aria-label="Select Vocal Language">
+          <option value="en-US">🇬🇧 English</option>
+          <option value="ta-IN">🇮🇳 தமிழ் (Tamil)</option>
+          <option value="ml-IN">🇮🇳 മലയാളம் (Malayalam)</option>
+        </select>
+
+        <!-- Tactical Swipe Mic Off/On Control with Live VU Signal -->
+        <div class="swipe-mic-control" id="swipeMicControl" title="Swipe or Click to Toggle Microphone">
+          <div class="swipe-mic-track" id="swipeMicTrack" role="switch" aria-checked="false" aria-label="Microphone Swipe Switch" tabindex="0">
+            <div class="swipe-mic-shimmer"></div>
+            <span class="swipe-mic-text" id="swipeMicText">◄ SWIPE MIC OFF</span>
+            <div class="swipe-mic-knob" id="swipeMicKnob" title="Drag to swipe or click to toggle mic">
+              <svg class="mic-knob-icon mic-on-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+              </svg>
+              <svg class="mic-knob-icon mic-off-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="2" y1="2" x2="22" y2="22"/>
+                <path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2"/>
+                <path d="M5 10v2a7 7 0 0 0 12 5"/>
+                <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/>
+                <path d="M9 9v3a3 3 0 0 0 5.12 2.12"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Hidden compatibility button for btnActivateVoice so existing event listeners continue to work -->
+          <button class="visually-hidden-compat" id="btnActivateVoice" aria-hidden="true" tabindex="-1"></button>
+          <div class="mic-vu-mini" id="micMiniVu" title="Hardware Mic Acoustic Signal">
+            <span class="vu-bar bar-1"></span>
+            <span class="vu-bar bar-2"></span>
+            <span class="vu-bar bar-3"></span>
+          </div>
+        </div>
+
+        <!-- Audio Volume / Mute Button -->
+        <button class="btn-icon-tactical" id="btnAudioToggle" title="Toggle Procedural Audio Effects" aria-label="Toggle Sound Effects">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+
+        <!-- Voice & Settings Drawer Button -->
+        <button class="btn-icon-tactical" id="btnSettings" title="Voice & Telemetry Settings" aria-label="Open Voice Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- 3D AI Agent Virtual Office Toggle Button -->
+        <button class="btn-icon-tactical active" id="btnToggleOffice" title="Toggle 3D AI Agent Virtual Office (18 Cabins + FRIDEY Suite)" aria-label="Toggle AI Agent Office">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <path d="M9 22v-4h6v4"></path>
+            <path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"></path>
+          </svg>
+        </button>
+
+        <!-- AI Chatbot Column Toggle Button (Fold / Unfold) -->
+        <button class="btn-icon-tactical active" id="btnToggleChatbot" title="Toggle AI Chatbot Column (Fold / Unfold)" aria-label="Toggle AI Chatbot Column">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main HUD Grid Layout -->
+    <main class="hud-grid-layout">
+
+      <!-- CENTER COLUMN: Holographic Core, Audio Visualizer & Protocols -->
+      <section class="center-col" aria-label="FRIDEY Holographic Arc Core">
+        
+        <!-- Hologram Stage -->
+        <div class="hud-panel holo-stage-panel" id="holoStagePanel">
+          <div class="corner-decor corner-tl"></div>
+          <div class="corner-decor corner-tr"></div>
+          <div class="corner-decor corner-bl"></div>
+          <div class="corner-decor corner-br"></div>
+
+          <!-- Live Subtitle Stream Banner -->
+          <div class="subtitle-stream-box" id="subtitleStream">
+            <div class="subtitle-indicator"></div>
+            <span class="subtitle-text" id="subtitleDisplay">FRIDEY vocal neural net standing by, Gojo. Click top-right mic or core to talk.</span>
+          </div>
+
+          <!-- Canvas Visualizer & Concentric Rings -->
+          <canvas id="hudCoreCanvas" width="520" height="520" title="Click Holographic Core to Toggle Voice Recognition"></canvas>
+
+          <!-- Floating HUD Telemetry Badges -->
+          <div class="holo-floating-badges">
+            <div class="holo-tag">FREQ: 1420.405 MHz</div>
+            <div class="holo-tag">QUANTUM MATRIX: SYNCED</div>
+            <div class="holo-tag">GOJO PROTOCOL: v8.4</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- WORKSPACE ROW: 3D AI Agent Virtual Office, Real Linux Terminal & Foldable AI Chatbot -->
+      <div class="hud-workspace-row" id="hudWorkspaceRow">
+
+        <!-- Folded AI Agent Office Ribbon (Shown when Office column is folded) -->
+        <button class="office-folded-ribbon" id="officeFoldedRibbon" title="Unfold 3D AI Agent Virtual Office" aria-label="Unfold AI Agent Office">
+          <span class="ribbon-icon">🏢</span>
+          <span class="ribbon-text">18 AGENTS VIRTUAL OFFICE • FRIDEY MASTER</span>
+          <span class="ribbon-unfold-arrow">⇥</span>
+        </button>
+
+        <!-- 3D AI AGENT VIRTUAL OFFICE COLUMN (18 AGENTS + FRIDEY MASTER BRAIN CABIN) -->
+        <aside class="agents-office-col" id="colAgentOffice" aria-label="3D AI Agent Virtual Office">
+          <section class="hud-panel agents-office-panel" id="panelAgentOffice">
+            <div class="corner-decor corner-tl"></div>
+            <div class="corner-decor corner-tr"></div>
+            <div class="corner-decor corner-bl"></div>
+            <div class="corner-decor corner-br"></div>
+
+            <!-- Virtual Office Header & Controls -->
+            <div class="office-panel-header">
+              <div class="office-title-wrap">
+                <span class="office-title-icon">🏢</span>
+                <div class="office-title-texts">
+                  <span class="office-title-main">CYBER OFFICE • 18 AGENTS + BRAIN</span>
+                  <span class="office-sub-title">FRIDEY EXECUTIVE SUITE &bull; INDIVIDUAL WORKSTATIONS</span>
+                </div>
+              </div>
+              <div class="office-header-actions">
+                <!-- View Mode Toggle: 3D Isometric View vs Grid Cards vs References Studio -->
+                <button class="btn-office-toggle active" id="btnOfficeMode3D" title="3D Animated Isometric Office View">
+                  <span>3D VIEW</span>
+                </button>
+                <button class="btn-office-toggle" id="btnOfficeModeGrid" title="Cabins & Laptops Grid List">
+                  <span>CABINS</span>
+                </button>
+                <button class="btn-office-toggle" id="btnOfficeModeRef" title="Character & Office Studio References">
+                  <span>REFS</span>
+                </button>
+                <button class="btn-fold-office" id="btnFoldOffice" title="Fold Virtual Office Column" aria-label="Fold Office Column">
+                  <span>◀ FOLD</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Fleet Telemetry Metrics Strip -->
+            <div class="office-metrics-strip" id="officeMetricsStrip">
+              <div class="metric-chip">
+                <span class="m-dot live"></span>
+                <span class="m-lbl">FLEET:</span>
+                <span class="m-val" id="officeFleetCount">18 + 1 BRAIN</span>
+              </div>
+              <div class="metric-chip">
+                <span class="m-lbl">ACTIVE MISSIONS:</span>
+                <span class="m-val" id="officeActiveMissions">18 / 18</span>
+              </div>
+              <div class="metric-chip">
+                <span class="m-lbl">BUS LOAD:</span>
+                <span class="m-val highlight" id="officeDataBusLoad">94.8%</span>
+              </div>
+            </div>
+
+            <!-- Department Filter Chips -->
+            <div class="office-dept-tabs-bar" id="officeDeptTabs">
+              <button class="dept-chip active" data-dept="all">[ALL] Cabins (19)</button>
+              <button class="dept-chip" data-dept="coding">[01-05] Coding</button>
+              <button class="dept-chip" data-dept="security">[06-09] Security</button>
+              <button class="dept-chip" data-dept="analytics">[10-13] Analytics</button>
+              <button class="dept-chip" data-dept="systems">[14-18] Ops</button>
+              <button class="dept-chip" data-dept="command">[00] Master Brain</button>
+            </div>
+
+            <!-- 3D Isometric Animated Canvas Viewport -->
+            <div class="office-3d-viewport-wrap" id="office3DViewport">
+              <canvas id="office3DCanvas" width="580" height="420" title="Click any Agent Cabin or Laptop to inspect and assign tasks"></canvas>
+              <div class="office-canvas-overlay-hints">
+                <span class="canvas-hint">Drag to Orbit 3D &bull; Scroll to Zoom &bull; Click Cabin to Inspect</span>
+                <button class="btn-reset-cam" id="btnResetOfficeCam" title="Reset Camera View">⟲ RESET CAM</button>
+              </div>
+            </div>
+
+            <!-- 2D Cabin Grid Viewport (Alternative toggle view) -->
+            <div class="office-grid-wrapper" id="officeGridWrapper" style="display: none;">
+              <!-- FRIDEY's Master Executive Cabin -->
+              <div class="master-cabin-card" id="cardFrideyMaster">
+                <div class="master-badge">CABIN-00 • MASTER BRAIN</div>
+                <div class="master-inner">
+                  <div class="master-avatar">00</div>
+                  <div class="master-info">
+                    <div class="master-title">AGENT-00 (FRIDEY BRAIN)</div>
+                    <div class="master-desk">Holographic Arc Table &bull; Quantum Supercomputer &bull; Neural Bus Dispatcher</div>
+                    <div class="master-status">ORCHESTRATING 18 SPECIALIST AGENTS ACROSS 4 DIVISIONS</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 18 Agent Cabins Container -->
+              <div class="agent-cabins-grid" id="agentCabinsGrid">
+                <!-- Dynamically rendered by agents.js -->
+              </div>
+            </div>
+
+            <!-- Character & Office Studio References Viewport -->
+            <div class="office-references-wrapper" id="officeReferencesWrapper" style="display: none;">
+              <div class="ref-subnav-bar">
+                <button class="ref-tab-btn active" id="btnRefTabChar" data-tab="character">
+                  <span>👤 WORKSTATION</span>
+                </button>
+                <button class="ref-tab-btn" id="btnRefTabOffice" data-tab="office">
+                  <span>🏢 VIRTUAL OFFICE</span>
+                </button>
+                <button class="ref-tab-btn" id="btnRefTabCollab" data-tab="collab">
+                  <span>👥 COLLABORATION</span>
+                </button>
+              </div>
+
+              <!-- 1. Solo Agent Character Workstation Reference -->
+              <div class="ref-content-pane active" id="refPaneChar">
+                <div class="ref-card">
+                  <div class="ref-card-header">
+                    <div class="ref-header-left">
+                      <span class="ref-badge-tag">CHARACTER REFERENCE • SOLO WORKSTATION</span>
+                      <h4 class="ref-title" id="refCharAgentTitle">AGENT-01 • WORKSTATION STUDIO</h4>
+                    </div>
+                    <div class="ref-agent-picker-wrap">
+                      <label for="selectRefAgent" class="ref-picker-lbl">AGENT:</label>
+                      <select id="selectRefAgent" class="ref-agent-select">
+                        <!-- Populated dynamically: AGENT-00 to AGENT-18 -->
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="ref-media-frame">
+                    <img src="chareter%20refference/AGENT%20cherater%20references.webp" alt="Agent Character Workstation Reference" class="ref-main-image" id="refCharMainImg">
+                    <!-- Interactive HUD Telemetry Overlays -->
+                    <div class="ref-overlay-clock" id="refOverlayClock">10:06 AM</div>
+                    <div class="ref-overlay-monitor" id="refOverlayMonitor">
+                      <div class="monitor-header">
+                        <span class="mon-dot"></span>
+                        <span class="mon-title" id="refMonTitle">NEURAL TERMINAL</span>
+                      </div>
+                      <div class="mon-code" id="refMonCode">async function executeTask() { ... }</div>
+                    </div>
+                    <div class="ref-overlay-status" id="refOverlayStatus">
+                      <span class="ref-pulse-dot"></span>
+                      <span id="refStatusText">SOLO FOCUS • WORKING</span>
+                    </div>
+                    <div class="ref-overlay-dept" id="refOverlayDept">ENGINEERING & CODE</div>
+                  </div>
+
+                  <div class="ref-meta-footer">
+                    <div class="ref-specs-grid">
+                      <div class="spec-cell">
+                        <span class="spec-k">Agent Code:</span>
+                        <span class="spec-v" id="refMetaCode">AGENT-01</span>
+                      </div>
+                      <div class="spec-cell">
+                        <span class="spec-k">Role:</span>
+                        <span class="spec-v" id="refMetaRole">Lead Systems Architect</span>
+                      </div>
+                      <div class="spec-cell">
+                        <span class="spec-k">Desk:</span>
+                        <span class="spec-v" id="refMetaDesk">Glass Executive Desk</span>
+                      </div>
+                      <div class="spec-cell">
+                        <span class="spec-k">Hardware:</span>
+                        <span class="spec-v" id="refMetaHardware">Triple-Screen Curved CarbonBook</span>
+                      </div>
+                    </div>
+                    <div class="ref-action-row">
+                      <button class="btn-ref-action" id="btnRefInspectAgent">🔍 INSPECT FULL DOSSIER</button>
+                      <button class="btn-ref-action highlight" id="btnRefSimulateTask">⚡ ASSIGN MISSION</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Agent Virtual Office Floor Reference -->
+              <div class="ref-content-pane" id="refPaneOffice" style="display: none;">
+                <div class="ref-card">
+                  <div class="ref-card-header">
+                    <div class="ref-header-left">
+                      <span class="ref-badge-tag">OFFICE ARCHITECTURE • 3D ISOMETRIC FLOOR</span>
+                      <h4 class="ref-title">VIRTUAL COMMAND CENTER FLOORPLAN</h4>
+                    </div>
+                    <span class="ref-stat-pill">18 CABINS + APEX SUITE</span>
+                  </div>
+
+                  <div class="ref-media-frame">
+                    <img src="chareter%20refference/Agent%20work%20office%20refference.webp" alt="Agent Work Office Reference" class="ref-main-image">
+                    <div class="office-hotspot-zone zone-coding" data-dept="coding" title="Engineering & Code Cabins 01-05">
+                      <span class="zone-tag">CODING (01-05)</span>
+                    </div>
+                    <div class="office-hotspot-zone zone-security" data-dept="security" title="Cyber Defense Cabins 06-09">
+                      <span class="zone-tag">SECURITY (06-09)</span>
+                    </div>
+                    <div class="office-hotspot-zone zone-analytics" data-dept="analytics" title="Deep Analytics Cabins 10-13">
+                      <span class="zone-tag">ANALYTICS (10-13)</span>
+                    </div>
+                    <div class="office-hotspot-zone zone-systems" data-dept="systems" title="Autonomous Ops Cabins 14-18">
+                      <span class="zone-tag">OPS (14-18)</span>
+                    </div>
+                  </div>
+
+                  <div class="ref-meta-footer">
+                    <p class="ref-desc">
+                      Minimalist open-plan architecture with panoramic perimeter window mullions, ergonomic workstation rows, and integrated cyber bus telemetry tracks.
+                    </p>
+                    <div class="ref-action-row">
+                      <button class="btn-ref-action" id="btnRefSwitchTo3D">🕹️ ENTER 3D INTERACTIVE VIEW</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Agents Collaboration Hub Reference -->
+              <div class="ref-content-pane" id="refPaneCollab" style="display: none;">
+                <div class="ref-card">
+                  <div class="ref-card-header">
+                    <div class="ref-header-left">
+                      <span class="ref-badge-tag">TEAMWORK BUS • MULTI-AGENT SYNC</span>
+                      <h4 class="ref-title" id="refCollabTitle">AGENT CO-WORKING & MISSION SYNCHRONIZATION</h4>
+                    </div>
+                    <span class="ref-stat-pill live">● BUS LIVE</span>
+                  </div>
+
+                  <div class="ref-media-frame">
+                    <img src="chareter%20refference/Agents%20colobes%20reference.webp" alt="Agents Collaboration Reference" class="ref-main-image">
+                    <!-- Animated Collaborative Speech Bubbles -->
+                    <div class="collab-speech-bubble bubble-left">
+                      <div class="bubble-icon">⬇️</div>
+                      <div class="bubble-text" id="bubbleLeftText">TX: 4.8 GB/s Sync</div>
+                    </div>
+                    <div class="collab-speech-bubble bubble-right">
+                      <div class="bubble-icon">📄</div>
+                      <div class="bubble-text" id="bubbleRightText">DOC: Telemetry v8.4</div>
+                    </div>
+                  </div>
+
+                  <div class="ref-meta-footer">
+                    <div class="collab-selector-strip">
+                      <span class="collab-lbl">COLLABORATING PAIR:</span>
+                      <div class="collab-pair-tags" id="collabPairTags">
+                        <button class="collab-pair-btn active" data-p1="agent-01" data-p2="agent-02">AGENT-01 ↔ AGENT-02 (IPC Bus)</button>
+                        <button class="collab-pair-btn" data-p1="agent-06" data-p2="agent-07">AGENT-06 ↔ AGENT-07 (SIEM Triage)</button>
+                        <button class="collab-pair-btn" data-p1="agent-10" data-p2="agent-11">AGENT-10 ↔ AGENT-11 (Neural RAG)</button>
+                      </div>
+                    </div>
+                    <div class="ref-action-row">
+                      <button class="btn-ref-action highlight" id="btnRefTriggerCollab">⚡ TRIGGER PAIR COLLABORATION</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+        </aside>
+
+        <!-- Foldable AI Chatbot Column ("ASK ANYTHING") -->
+        <aside class="chatbot-col" id="colChatbot" aria-label="FRIDEY AI Chatbot">
+          <section class="hud-panel chatbot-panel" id="panelChatbot">
+            <div class="corner-decor corner-tl"></div>
+            <div class="corner-decor corner-tr"></div>
+            <div class="corner-decor corner-bl"></div>
+            <div class="corner-decor corner-br"></div>
+
+            <!-- Chatbot Window Header -->
+            <div class="chatbot-header">
+              <div class="chatbot-title-info">
+                <span class="chatbot-icon">💬</span>
+                <div class="chatbot-title-text">
+                  <span class="chatbot-main-title">ASK ANYTHING • FRIDEY A.I.</span>
+                  <span class="chatbot-sub-title">Neural Tactical Intelligence</span>
+                </div>
+              </div>
+              <div class="chatbot-header-actions">
+                <span class="chatbot-status-badge">● ONLINE</span>
+                <button class="btn-chat-action" id="btnClearChat" title="Clear Chat History" aria-label="Clear Chat History">🗑️</button>
+                <button class="btn-chat-action btn-fold-chat" id="btnFoldChatbot" title="Fold / Collapse Chatbot Column" aria-label="Fold Chatbot Column">
+                  <span class="fold-icon">⇥</span>
+                  <span class="fold-text">FOLD</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Suggestion Topic Chips for Chatbot -->
+            <div class="chatbot-chips-bar" id="chatbotChipsBar">
+              <button class="chat-chip" data-query="take datas on backend">⚡ Backend Live Data</button>
+              <button class="chat-chip" data-query="instruct agent 1 to audit network security and optimize IPC bus">🎯 Instruct AGENT-01</button>
+              <button class="chat-chip" data-query="collab agent 1 and agent 2">🤝 Collab AGENT-01 & 02</button>
+              <button class="chat-chip" data-query="show all agents in the fleet">🏢 18 Agents Fleet</button>
+              <button class="chat-chip" data-query="What is current Arc Reactor telemetry?">⚡ Arc Telemetry</button>
+              <button class="chat-chip" data-query="Who engineered you and founded Gojo Enterprise?">👑 Who Made You?</button>
+              <button class="chat-chip" data-query="Explain Blue Team cyber defense tools">🛡️ Blue Team</button>
+              <button class="chat-chip" data-query="How to run an aggressive Nmap scan?">🌐 Nmap Recon</button>
+              <button class="chat-chip chip-tamil-query" data-query="ஆர்க் ரியாக்டர் டெலிமெட்ரி நிலை என்ன?">🇮🇳 ஆர்க் நிலை</button>
+              <button class="chat-chip chip-tamil-query" data-query="கோஜோ யார்?">🇮🇳 கோஜோ யார்?</button>
+            </div>
+
+            <!-- Chatbot Message Stream -->
+            <div class="chatbot-messages-stream" id="chatbotMessagesStream" role="log" aria-live="polite">
+              <!-- Initial Welcome Message from FRIDEY -->
+              <div class="chat-msg chat-assistant-msg">
+                <div class="msg-avatar msg-avatar-ai" title="FRIDEY AI Core">
+                  <svg class="msg-avatar-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>
+                    <circle cx="16" cy="16" r="8" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.2"/>
+                    <polygon points="16,11 20.5,19 11.5,19" stroke="currentColor" stroke-width="1" fill="none"/>
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="msg-content-wrapper">
+                  <div class="msg-sender">FRIDEY A.I. <span class="msg-time">ONLINE</span></div>
+                  <div class="msg-bubble">
+                    Good day, Gojo. I am FRIDEY, your neural tactical assistant engineered by Gojo Enterprise. Ask me anything about suit telemetry, cyber defense, Linux commands, protocols, or speak in **தமிழ் (Tamil)** using the Tamil Voice Chat button!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chatbot Input Composer -->
+            <div class="chatbot-composer" id="chatbotComposer">
+              <div class="composer-inner">
+                <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Ask FRIDEY anything..." aria-label="Ask FRIDEY anything" autocomplete="off">
+                <button class="btn-chat-mic" id="btnChatMic" title="Voice Input for Chatbot" aria-label="Voice Input">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                  </svg>
+                </button>
+                <button class="btn-chat-send" id="btnChatSend" title="Send Question" aria-label="Send Message">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+          </section>
+        </aside>
+
+        <!-- Folded Chatbot Ribbon (Revealed when Chatbot column is folded) -->
+        <button class="chatbot-folded-ribbon" id="chatbotFoldedRibbon" title="Unfold Chatbot Column (Ask Anything)" aria-label="Unfold Chatbot Column">
+          <span class="ribbon-icon">💬</span>
+          <span class="ribbon-text">ASK ANYTHING • FRIDEY</span>
+          <span class="ribbon-unfold-arrow">⇤</span>
+        </button>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Voice & Audio Configuration Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="settings-drawer" id="settingsDrawer" aria-label="Voice & HUD Settings">
+    <div class="settings-header">
+      <h3 class="panel-title">FRIDEY MATRIX CONFIG</h3>
+      <button class="btn-icon-tactical" id="btnCloseSettings" title="Close Settings" aria-label="Close Settings">✕</button>
+    </div>
+
+    <div class="settings-group">
+      <label for="drawerLangSelect" class="setting-label">Primary Language Matrix</label>
+      <select class="voice-select-box" id="drawerLangSelect" aria-label="Select Primary Language">
+        <option value="en-US">🇬🇧 English (US/UK/Irish)</option>
+        <option value="ta-IN">🇮🇳 தமிழ் (Tamil - India)</option>
+        <option value="ml-IN">🇮🇳 മലയാളം (Malayalam - India)</option>
+      </select>
+    </div>
+
+    <div class="settings-group">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <label for="voiceSelect" class="setting-label">Vocal Synthesizer Matrix</label>
+        <label style="display: flex; align-items: center; gap: 6px; font-family: var(--font-telemetry); font-size: 11px; color: var(--theme-primary); cursor: pointer;">
+          <input type="checkbox" id="chkFemaleOnly" checked style="accent-color: var(--theme-primary); cursor: pointer;">
+          <span>Female Only</span>
+        </label>
+      </div>
+      <select class="voice-select-box" id="voiceSelect" aria-label="Select Vocal Engine">
+        <!-- Dynamically populated with Irish/UK/Female voices by voice.js -->
+      </select>
+      <div style="display: flex; gap: 8px; margin-top: 6px;">
+        <button class="btn-protocol" id="btnTestVoice" style="flex: 1; font-size: 11px; padding: 6px 10px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          TEST VOICE
+        </button>
+        <button class="btn-protocol" id="btnCycleVoice" title="Switch to another female voice profile" style="flex: 1; font-size: 11px; padding: 6px 10px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          CHANGE VOICE
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="setting-label">
+        <span>Vocal Pitch</span>
+        <span id="pitchVal">1.10x</span>
+      </div>
+      <input type="range" min="0.6" max="1.6" step="0.05" value="1.10" class="setting-slider" id="pitchSlider" aria-label="Voice Pitch">
+    </div>
+
+    <div class="settings-group">
+      <div class="setting-label">
+        <span>Cadence Speed</span>
+        <span id="rateVal">1.02x</span>
+      </div>
+      <input type="range" min="0.7" max="1.5" step="0.05" value="1.02" class="setting-slider" id="rateSlider" aria-label="Voice Rate">
+    </div>
+
+    <!-- System Microphone Hardware Access -->
+    <div class="settings-group" style="background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.15); border-radius: var(--border-radius-sm); padding: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="setting-label" style="margin-bottom: 0;">System Microphone</span>
+        <span class="mic-badge prompt" id="micStatusBadge">CONNECTING</span>
+      </div>
+      <label for="micDeviceSelect" style="font-family: var(--font-telemetry); font-size: 11px; color: var(--color-text-dim); display: block; margin-bottom: 4px;">Active Input Device</label>
+      <select class="voice-select-box" id="micDeviceSelect" aria-label="Select System Microphone">
+        <option value="">Default System Microphone</option>
+      </select>
+      <div style="margin-top: 10px;">
+        <label style="display: flex; align-items: center; gap: 6px; font-family: var(--font-telemetry); font-size: 11px; color: var(--theme-primary); cursor: pointer;">
+          <input type="checkbox" id="chkContinuousListen" style="accent-color: var(--theme-primary); cursor: pointer;">
+          <span>Always-Listening (Auto-Resume)</span>
+        </label>
+      </div>
+      <div class="mic-level-box" style="margin-top: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 10px; font-family: var(--font-mono); color: var(--color-text-dim); margin-bottom: 4px;">
+          <span>ACOUSTIC SIGNAL</span>
+          <span id="micRmsVal">0%</span>
+        </div>
+        <div class="mic-level-track">
+          <div class="mic-level-bar" id="micLevelFill"></div>
+        </div>
+      </div>
+      <button class="btn-protocol" id="btnRequestMicAccess" style="margin-top: 10px; width: 100%; font-size: 11px; padding: 7px 10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        </svg>
+        CONNECT FULL SYSTEM MIC
+      </button>
+    </div>
+
+    <div class="settings-group" style="margin-top: 10px;">
+      <div class="setting-label">Audio Engine</div>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-dim); line-height: 1.6;">
+        Microphone: Web Audio Stream (48kHz Analyser)<br>
+        Speech Recognition: Web Speech API (Continuous)<br>
+        Synthesizer: Web Audio Procedural Oscillator
+      </div>
+    </div>
+  </aside>
+
+  <!-- Agent Detail & Mission Dispatch Modal -->
+  <div class="agent-modal-backdrop" id="agentDetailModal" style="display: none;">
+    <div class="agent-modal-card">
+      <div class="agent-modal-header">
+        <div class="modal-agent-title">
+          <span class="modal-avatar" id="modalAgentAvatar">01</span>
+          <div>
+            <div class="modal-agent-name" id="modalAgentName">AGENT-01</div>
+            <div class="modal-agent-role" id="modalAgentRole">Lead Systems Architect</div>
+          </div>
+        </div>
+        <button class="btn-icon-tactical" id="btnCloseAgentModal" title="Close" aria-label="Close Agent Details">✕</button>
+      </div>
+
+      <!-- Character & Workstation Reference Banner -->
+      <div class="modal-char-ref-banner" id="modalCharRefBanner">
+        <img src="chareter%20refference/AGENT%20cherater%20references.webp" alt="Character Reference" class="modal-banner-img" id="modalBannerImg">
+        <div class="modal-banner-overlay">
+          <span class="banner-state-pill" id="modalBannerStatePill">● SOLO FOCUS WORKSTATION</span>
+          <span class="banner-dept-tag" id="modalBannerDeptTag">ENGINEERING & CODE</span>
+        </div>
+      </div>
+
+      <div class="agent-modal-body">
+        <div class="modal-info-row">
+          <div class="modal-info-col">
+            <span class="m-lbl">Cabin Pod:</span>
+            <span class="m-val" id="modalAgentCabin">Pod A-01 (Executive West Wing)</span>
+          </div>
+          <div class="modal-info-col">
+            <span class="m-lbl">Workstation & Gear:</span>
+            <span class="m-val" id="modalAgentDesk">Obsidian Glass Desk &bull; MacBook M3 Max</span>
+          </div>
+        </div>
+
+        <div class="modal-info-row">
+          <div class="modal-info-col full">
+            <span class="m-lbl">Specialized AI Skills:</span>
+            <div class="modal-skills-tags" id="modalAgentSkills">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-current-task-box">
+          <div class="task-box-header">
+            <span class="task-lbl">CURRENT ACTIVE MISSION:</span>
+            <span class="task-progress-pct" id="modalTaskPct">68%</span>
+          </div>
+          <div class="task-desc" id="modalTaskDesc">Compiling Next.js edge runtime and streaming neural telemetry pipelines.</div>
+          <div class="task-bar-track">
+            <div class="task-bar-fill" id="modalTaskBar" style="width: 68%;"></div>
+          </div>
+        </div>
+
+        <!-- Task Assignment Form -->
+        <div class="modal-assign-section">
+          <label for="inputAssignTask" class="assign-lbl">⚡ ASSIGN NEW TASK (DISPATCH FROM FRIDEY BRAIN):</label>
+          <div class="assign-input-group">
+            <input type="text" id="inputAssignTask" class="assign-input" placeholder="Enter new skill-based mission (e.g. Audit API gateways, Train LoRA model)...">
+            <button class="btn-protocol btn-assign-action" id="btnDispatchTask">DISPATCH MISSION</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="audio.js"></script>
+  <script src="canvas.js"></script>
+  <script src="agents.js"></script>
+  <script src="voice.js"></script>
+  <script src="core.js"></script>
+  <script src="backend-bridge.js"></script>
+</body>
+</html>
+

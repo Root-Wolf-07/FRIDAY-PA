@@ -73,23 +73,30 @@ app = FastAPI(
 # Defensive middleware: Security headers
 app.add_middleware(SecurityHeadersMiddleware)
 
-# CORS: Restricted to local loopback origins by default with all frontend ports enabled
+# CORS: Universal support for Localhost, PWA, Capacitor iOS (capacitor://localhost), Android (http://localhost & 10.0.2.2), and LAN
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost",
+        "https://localhost",
         "http://localhost:3000",
         "http://localhost:4173",
         "http://localhost:5173",
         "http://localhost:8000",
+        "http://127.0.0.1",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:4173",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000",
+        "http://10.0.2.2",
+        "http://10.0.2.2:8000",
+        "capacitor://localhost",
+        "ionic://localhost",
         "http://tauri.localhost",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r".*",
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -113,7 +120,9 @@ async def serve_bridge_js():
 
 
 @app.get("/", tags=["Frontend Link"], response_class=HTMLResponse)
+@app.head("/", tags=["Frontend Link"], response_class=HTMLResponse)
 @app.get("/index.html", tags=["Frontend Link"], response_class=HTMLResponse)
+@app.head("/index.html", tags=["Frontend Link"], response_class=HTMLResponse)
 async def serve_frontend_index():
     """Serve the unmodified FRIDAY HUD index.html with live backend bridge injection."""
     index_file = FRONTEND_DIR / "index.html"
@@ -133,6 +142,8 @@ class SafeFrontendStaticFiles(StaticFiles):
 
     async def get_response(self, path: str, scope):
         clean_path = path.lstrip("/\\")
+        if clean_path in ("", "index.html"):
+            return await serve_frontend_index()
         first_segment = clean_path.split("/")[0] if "/" in clean_path else clean_path
         if first_segment.startswith(".") or first_segment in {
             "Backend_friday_AI-main",

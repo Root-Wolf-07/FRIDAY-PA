@@ -16,12 +16,12 @@
   <meta name="msapplication-TileColor" content="#040810">
 
   <!-- Web App Manifest & App Icons -->
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
@@ -134,14 +134,6 @@
           </svg>
         </button>
 
-        <!-- 3D AI Agent Virtual Office Toggle Button -->
-        <button class="btn-icon-tactical active" id="btnToggleOffice" title="Toggle 3D AI Agent Virtual Office (18 Cabins + FRIDEY Suite)" aria-label="Toggle AI Agent Office">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-            <path d="M9 22v-4h6v4"></path>
-            <path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"></path>
-          </svg>
-        </button>
 
         <!-- AI Chatbot Column Toggle Button (Fold / Unfold) -->
         <button class="btn-icon-tactical active" id="btnToggleChatbot" title="Toggle AI Chatbot Column (Fold / Unfold)" aria-label="Toggle AI Chatbot Column">
@@ -187,12 +179,6 @@
       <!-- WORKSPACE ROW: 3D AI Agent Virtual Office, Real Linux Terminal & Foldable AI Chatbot -->
       <div class="hud-workspace-row" id="hudWorkspaceRow">
 
-        <!-- Folded AI Agent Office Ribbon (Shown when Office column is folded) -->
-        <button class="office-folded-ribbon" id="officeFoldedRibbon" title="Unfold 3D AI Agent Virtual Office" aria-label="Unfold AI Agent Office">
-          <span class="ribbon-icon">🏢</span>
-          <span class="ribbon-text">18 AGENTS VIRTUAL OFFICE • FRIDEY MASTER</span>
-          <span class="ribbon-unfold-arrow">⇥</span>
-        </button>
 
         <!-- 3D AI AGENT VIRTUAL OFFICE COLUMN (18 AGENTS + FRIDEY MASTER BRAIN CABIN) -->
         <aside class="agents-office-col" id="colAgentOffice" aria-label="3D AI Agent Virtual Office">
@@ -207,12 +193,11 @@
               <div class="office-title-wrap">
                 <span class="office-title-icon">🏢</span>
                 <div class="office-title-texts">
-                  <span class="office-title-main">CYBER OFFICE • 18 AGENTS + BRAIN</span>
-                  <span class="office-sub-title">FRIDEY EXECUTIVE SUITE &bull; INDIVIDUAL WORKSTATIONS</span>
+                  <span class="office-title-main">CYBER OFFICE • ENTERPRISE IT INFRASTRUCTURE</span>
+                  <span class="office-sub-title">DUAL-ISP FIBER &bull; CLIMATE MDF &bull; SIT-STAND &bull; SOUNDPROOF BOARDROOM &bull; PANTRY & SAFETY</span>
                 </div>
               </div>
               <div class="office-header-actions">
-                <!-- View Mode Toggle: 3D Isometric View vs Grid Cards vs References Studio -->
                 <button class="btn-office-toggle active" id="btnOfficeMode3D" title="3D Animated Isometric Office View">
                   <span>3D VIEW</span>
                 </button>
@@ -222,27 +207,47 @@
                 <button class="btn-office-toggle" id="btnOfficeModeRef" title="Character & Office Studio References">
                   <span>REFS</span>
                 </button>
-                <button class="btn-fold-office" id="btnFoldOffice" title="Fold Virtual Office Column" aria-label="Fold Office Column">
-                  <span>◀ FOLD</span>
-                </button>
+                <a href="virtual_office.html" target="_blank" class="btn-office-toggle" id="btnLaunchFullOffice" title="Launch Interactive 5-Room Corporate 3D Campus in Fullscreen" style="text-decoration:none; display:inline-flex; align-items:center;">
+                  <span>🏢 CAMPUS 3D ↗</span>
+                </a>
+                <span class="office-status-pill" style="font-family: var(--font-telemetry); font-size: 10px; font-weight: 700; color: #00ff9d; background: rgba(0,255,157,0.1); border: 1px solid rgba(0,255,157,0.3); padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">● PERMANENT EXPANDED</span>
               </div>
             </div>
 
-            <!-- Fleet Telemetry Metrics Strip -->
+            <!-- Enterprise IT Infrastructure Telemetry Metrics Strip -->
             <div class="office-metrics-strip" id="officeMetricsStrip">
-              <div class="metric-chip">
+              <div class="metric-chip" title="Active AI Agent Fleet + FRIDEY Master Brain">
                 <span class="m-dot live"></span>
                 <span class="m-lbl">FLEET:</span>
                 <span class="m-val" id="officeFleetCount">18 + 1 BRAIN</span>
               </div>
-              <div class="metric-chip">
-                <span class="m-lbl">ACTIVE MISSIONS:</span>
-                <span class="m-val" id="officeActiveMissions">18 / 18</span>
+              <div class="metric-chip" title="Dual-ISP Redundant Fiber Optic (Primary 10G + Failover Line)">
+                <span class="m-dot live" style="background:#00ff9d; box-shadow:0 0 6px #00ff9d;"></span>
+                <span class="m-lbl">DUAL-ISP:</span>
+                <span class="m-val highlight" id="officeIspStatus">10G FAILOVER OK</span>
               </div>
-              <div class="metric-chip">
-                <span class="m-lbl">BUS LOAD:</span>
-                <span class="m-val highlight" id="officeDataBusLoad">94.8%</span>
+              <div class="metric-chip" title="Climate-Controlled MDF/IDF Server Closet with FM-200 Fire Suppression">
+                <span class="m-lbl">MDF/IDF:</span>
+                <span class="m-val" id="officeMdfStatus">19.4°C • FM-200</span>
               </div>
+              <div class="metric-chip" title="Centralized UPS & Backup Generator Power Redundancy">
+                <span class="m-lbl">UPS:</span>
+                <span class="m-val highlight" id="officeUpsStatus">100% (2.4h)</span>
+              </div>
+              <div class="metric-chip" title="Multi-Zone HVAC with HEPA H13 Filtration & NDIR CO2 Monitoring">
+                <span class="m-lbl">HVAC:</span>
+                <span class="m-val" id="officeHvacStatus">21.4°C • HEPA OK</span>
+              </div>
+            </div>
+
+            <!-- Enterprise Infrastructure Layer Tabs (5 Pillars) -->
+            <div class="office-infra-tabs-bar" id="officeInfraTabs">
+              <button class="infra-chip active" data-infra="all" title="View All Enterprise Infrastructure Layers">[ALL INFRA]</button>
+              <button class="infra-chip" data-infra="core_it" title="1. Dual-ISP, 10GbE Switches, MDF/IDF Server Closet, UPS, Biometric Access">[1. CORE IT & MDF]</button>
+              <button class="infra-chip" data-infra="workstations" title="2. Motorized Sit-Stand Desks, Dual 4K Displays, Thunderbolt Docks, Wire Trays">[2. WORKSTATIONS]</button>
+              <button class="infra-chip" data-infra="zones" title="3. Soundproof Conference w/ PTZ, Acoustic Phone Booths, Executive Suite">[3. ROOMS & ZONES]</button>
+              <button class="infra-chip" data-infra="acoustic_hvac" title="4. Acoustic Baffles, Multi-zone HVAC, HEPA H13 & Biophilic Moss Walls">[4. HVAC & ACOUSTIC]</button>
+              <button class="infra-chip" data-infra="pantry_safety" title="5. Commercial Espresso, Cold Brew, Fridge, OSHA AED & First Aid">[5. PANTRY & SAFETY]</button>
             </div>
 
             <!-- Department Filter Chips -->
@@ -255,11 +260,29 @@
               <button class="dept-chip" data-dept="command">[00] Master Brain</button>
             </div>
 
-            <!-- 3D Isometric Animated Canvas Viewport -->
+            <!-- 3D Isometric Virtual Office & Three.js WebGL GLTF Engine -->
             <div class="office-3d-viewport-wrap" id="office3DViewport">
-              <canvas id="office3DCanvas" width="580" height="420" title="Click any Agent Cabin or Laptop to inspect and assign tasks"></canvas>
+              <!-- Sub-Engine Toolbar: 3D Fleet Cabins vs Three.js GLTF Avatar Workstation -->
+              <div class="office-subengine-bar">
+                <div class="subengine-left">
+                  <button class="btn-subengine active" id="btnSubengineFleet" title="19 Cabins Open Virtual Office">🌐 3D FLEET (19 CABINS)</button>
+                  <button class="btn-subengine" id="btnSubengineWorkstation" title="Three.js GLTF Animated Typing Workstation">👤 3D AVATAR (GLTF LOADER)</button>
+                </div>
+                <div class="subengine-right">
+                  <span class="subengine-tag" id="office3DEngineBadge">GLTF: READY</span>
+                  <label for="inputLoadGLB" class="btn-load-glb-lbl" title="Select and load local .glb / .gltf model">📂 LOAD .GLB</label>
+                  <input type="file" id="inputLoadGLB" accept=".glb,.gltf" style="display:none">
+                </div>
+              </div>
+
+              <!-- 1. Isometric Fleet Canvas -->
+              <canvas id="office3DCanvas" width="580" height="420" title="Click any Agent Workstation or Laptop to inspect and assign tasks"></canvas>
+
+              <!-- 2. Three.js WebGL GLTF Workstation Scene Container -->
+              <div id="officeThreeViewport" class="office-three-viewport" style="display:none;"></div>
+
               <div class="office-canvas-overlay-hints">
-                <span class="canvas-hint">Drag to Orbit 3D &bull; Scroll to Zoom &bull; Click Cabin to Inspect</span>
+                <span class="canvas-hint" id="officeCamHint">Drag to Orbit 3D &bull; Scroll to Zoom &bull; Drop .glb model here &bull; Typing Loop Active</span>
                 <button class="btn-reset-cam" id="btnResetOfficeCam" title="Reset Camera View">⟲ RESET CAM</button>
               </div>
             </div>
@@ -316,7 +339,7 @@
                   </div>
 
                   <div class="ref-media-frame">
-                    <img src="chareter%20refference/AGENT%20cherater%20references.webp" alt="Agent Character Workstation Reference" class="ref-main-image" id="refCharMainImg">
+                    <img src="chareter%20refference/agent_typing_character.jpeg" alt="AI Agent Character Typing Loop Reference" class="ref-main-image" id="refCharMainImg">
                     <!-- Interactive HUD Telemetry Overlays -->
                     <div class="ref-overlay-clock" id="refOverlayClock">10:06 AM</div>
                     <div class="ref-overlay-monitor" id="refOverlayMonitor">
@@ -328,9 +351,10 @@
                     </div>
                     <div class="ref-overlay-status" id="refOverlayStatus">
                       <span class="ref-pulse-dot"></span>
-                      <span id="refStatusText">SOLO FOCUS • WORKING</span>
+                      <span id="refStatusText">3D TYPING LOOP • ACTIVE</span>
                     </div>
                     <div class="ref-overlay-dept" id="refOverlayDept">ENGINEERING & CODE</div>
+                    <a href="https://skfb.ly/oIzPv" target="_blank" rel="noopener" class="ref-3d-src-badge" title="Sketchfab: Typing loop animation">3D MODEL: https://skfb.ly/oIzPv ↗</a>
                   </div>
 
                   <div class="ref-meta-footer">
@@ -372,7 +396,7 @@
                   </div>
 
                   <div class="ref-media-frame">
-                    <img src="chareter%20refference/Agent%20work%20office%20refference.webp" alt="Agent Work Office Reference" class="ref-main-image">
+                    <img src="chareter%20refference/office_3d_structure.jpeg" alt="Working Office Structure 3D Architecture" class="ref-main-image">
                     <div class="office-hotspot-zone zone-coding" data-dept="coding" title="Engineering & Code Cabins 01-05">
                       <span class="zone-tag">CODING (01-05)</span>
                     </div>
@@ -385,6 +409,7 @@
                     <div class="office-hotspot-zone zone-systems" data-dept="systems" title="Autonomous Ops Cabins 14-18">
                       <span class="zone-tag">OPS (14-18)</span>
                     </div>
+                    <a href="https://skfb.ly/osDKZ" target="_blank" rel="noopener" class="ref-3d-src-badge" title="Sketchfab: Office by Zeps3D">3D MODEL: https://skfb.ly/osDKZ ↗</a>
                   </div>
 
                   <div class="ref-meta-footer">
@@ -662,9 +687,9 @@
 
       <!-- Character & Workstation Reference Banner -->
       <div class="modal-char-ref-banner" id="modalCharRefBanner">
-        <img src="chareter%20refference/AGENT%20cherater%20references.webp" alt="Character Reference" class="modal-banner-img" id="modalBannerImg">
+        <img src="chareter%20refference/agent_typing_character.jpeg" alt="Character Reference" class="modal-banner-img" id="modalBannerImg">
         <div class="modal-banner-overlay">
-          <span class="banner-state-pill" id="modalBannerStatePill">● SOLO FOCUS WORKSTATION</span>
+          <span class="banner-state-pill" id="modalBannerStatePill">● 3D TYPING AGENT [WORKING]</span>
           <span class="banner-dept-tag" id="modalBannerDeptTag">ENGINEERING & CODE</span>
         </div>
       </div>
@@ -710,10 +735,54 @@
           </div>
         </div>
       </div>
+  </div>
+
+  <!-- Enterprise IT Infrastructure Detail Modal -->
+  <div class="agent-modal-backdrop" id="infraDetailModal" style="display: none;">
+    <div class="agent-modal-card infra-modal-card">
+      <div class="agent-modal-header">
+        <div class="modal-agent-title">
+          <span class="modal-avatar" id="modalInfraIcon">🌐</span>
+          <div>
+            <div class="modal-agent-name" id="modalInfraTitle">MDF / IDF SERVER CLOSET & DATA CENTER</div>
+            <div class="modal-agent-role" id="modalInfraCategory">1. CORE IT & NETWORK INFRASTRUCTURE</div>
+          </div>
+        </div>
+        <button class="btn-icon-tactical" id="btnCloseInfraModal" title="Close" aria-label="Close Infrastructure Details">✕</button>
+      </div>
+
+      <div class="infra-status-banner" id="modalInfraBanner">
+        <span class="banner-state-pill" id="modalInfraStatusPill">● OPERATIONAL • 100% HEALTH</span>
+        <span class="banner-dept-tag" id="modalInfraTag">ENTERPRISE IT INFRASTRUCTURE</span>
+      </div>
+
+      <div class="agent-modal-body">
+        <div class="infra-desc-box" id="modalInfraDesc">
+          Dedicated climate-controlled, fire-suppressed server room housing core routers, next-gen firewalls, 10GbE aggregation switches, and patch panels. Redundant enterprise fiber links ensure 99.999% uptime with automated sub-second failover.
+        </div>
+
+        <div class="infra-specs-section">
+          <div class="infra-specs-head">TECHNICAL SPECIFICATIONS & HARDWARE ARCHITECTURE:</div>
+          <div class="infra-specs-grid" id="modalInfraSpecsGrid">
+            <!-- Dynamically populated by agents.js -->
+          </div>
+        </div>
+
+        <div class="infra-modal-actions" id="modalInfraActions">
+          <button class="btn-protocol btn-infra-action" id="btnInfraAction1">⚡ RUN SYSTEM DIAGNOSTIC</button>
+          <button class="btn-protocol btn-infra-action secondary" id="btnInfraAction2">📊 REFRESH TELEMETRY</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- JavaScript Modules -->
+  <script src="vendor/three/three.min.js"></script>
+  <script src="vendor/three/GLTFLoader.js"></script>
+  <script src="vendor/three/OrbitControls.js"></script>
+  <script src="vendor/three/postprocessing.js"></script>
+  <script src="vendor/three/office_pbr_textures.js"></script>
+  <script src="vendor/three/office_animation_engine.js"></script>
+  <script src="office_3d_scene.js"></script>
   <script src="audio.js"></script>
   <script src="canvas.js"></script>
   <script src="agents.js"></script>

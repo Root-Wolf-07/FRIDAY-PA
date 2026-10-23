@@ -13,6 +13,8 @@
     "backend": "./start.sh",
     "frontend:standalone": "python3 -m http.server 4173",
     "open": "open http://localhost:8000",
+    "office:open": "open http://localhost:8000/virtual_office.html",
+    "office:vite": "cd virtual-office && npx vite",
     "cli": "node cli.js",
     "cli:status": "node cli.js --status",
     "cli:hud": "node cli.js --web",
@@ -29,5 +31,11 @@
     "canvas-visualizer"
   ],
   "author": "Gojo",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  }
 }

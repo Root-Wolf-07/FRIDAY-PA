@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>GOJO ENTERPRISE • Modern Tech Corporate Virtual Office</title>
+  <meta name="description" content="Interactive 5-Room Modern Tech Corporate Virtual Office in Three.js & Vite.">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <div id="canvasContainer"></div>
+
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">LOADING 3D TECH CORPORATE CAMPUS...</div>
+  </div>
+
+  <!-- Top Application Header Bar -->
+  <header class="app-header">
+    <div class="brand-badge">
+      <div class="brand-logo-hex">G</div>
+      <div class="brand-text-col">
+        <span class="brand-title">GOJO ENTERPRISE</span>
+        <span class="brand-sub">5-ROOM VIRTUAL TECH CAMPUS</span>
+      </div>
+    </div>
+
+    <!-- Room Selector Pills -->
+    <nav class="nav-rooms-bar" id="navRoomsBar">
+      <button class="nav-pill active" data-room="overview">
+        <span class="dot" style="color:#00f0ff"></span>OVERVIEW
+      </button>
+      <button class="nav-pill" data-room="lobby">
+        <span class="dot" style="color:#ffffff"></span>LOBBY
+      </button>
+      <button class="nav-pill" data-room="master">
+        <span class="dot" style="color:#ffaa00"></span>MASTER SUITE
+      </button>
+      <button class="nav-pill" data-room="alpha">
+        <span class="dot" style="color:#00ff88"></span>TEAM ALPHA (ENG)
+      </button>
+      <button class="nav-pill" data-room="beta">
+        <span class="dot" style="color:#b05cff"></span>TEAM BETA (DESIGN)
+      </button>
+      <button class="nav-pill" data-room="gamma">
+        <span class="dot" style="color:#00f0ff"></span>TEAM GAMMA (AI)
+      </button>
+      <button class="nav-pill" data-room="delta">
+        <span class="dot" style="color:#ff5252"></span>TEAM DELTA (OPS)
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="action-btn" id="btnToggleCamMode" title="Switch between Orbit and First-Person Walkthrough">
+        🎥 ORBIT VIEW
+      </button>
+      <button class="action-btn" id="btnToggleLight" title="Toggle Daylight vs Cyber Night Lighting">
+        ☀️ DAYLIGHT
+      </button>
+      <button class="action-btn" id="btnResetView" title="Reset Camera View to Full Campus">
+        ⟲ RESET
+      </button>
+    </div>
+  </header>
+
+  <!-- Sliding Department Dossier Card -->
+  <aside class="room-dossier-card" id="roomDossierCard">
+    <div class="dossier-header">
+      <div>
+        <div class="dossier-badge-row">
+          <span class="dossier-status-dot"></span>
+          <span class="dossier-zone-tag" id="dossierZoneTag">ZONE 1 • EXECUTIVE</span>
+        </div>
+        <h2 class="dossier-title" id="dossierTitle">Founder & Executive Suite</h2>
+      </div>
+      <button class="btn-close-dossier" id="btnCloseDossier" title="Close Dossier">✕</button>
+    </div>
+
+    <p class="dossier-desc" id="dossierDesc">
+      Solid walnut executive desk with dual-aspect glass views, ergonomic leather seating, and real-time enterprise KPI dashboard.
+    </p>
+
+    <!-- Specs Grid -->
+    <div class="dossier-specs-grid" id="dossierSpecsGrid"></div>
+
+    <!-- Active Sprint Progress -->
+    <div class="dossier-metric-bar-wrap">
+      <div class="metric-bar-header">
+        <span>SPRINT COMPLETION:</span>
+        <span id="dossierPctVal">94%</span>
+      </div>
+      <div class="metric-bar-track">
+        <div class="metric-bar-fill" id="dossierBarFill" style="width: 94%;"></div>
+      </div>
+    </div>
+
+    <button class="dossier-action-btn" id="btnInspectWorkstations">
+      ⚡ ASSIGN SPRINT MISSION
+    </button>
+  </aside>
+
+  <!-- Bottom HUD Hints & Minimap -->
+  <footer class="bottom-hud-bar">
+    <div class="hints-capsule">
+      <span class="hints-text">
+        <strong>CONTROLS:</strong> Drag to Orbit &bull; Scroll to Zoom &bull; Click any Room to Zoom In &bull; <strong>WASD / Arrows</strong> to Walk in First-Person
+      </span>
+    </div>
+
+    <!-- Minimap Radar -->
+    <div class="minimap-wrapper">
+      <canvas id="minimapCanvas" class="minimap-canvas" width="150" height="110"></canvas>
+    </div>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

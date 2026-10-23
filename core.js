@@ -352,36 +352,15 @@ class FridayCoreEngine {
       this.btnClearChat.addEventListener('click', () => this.clearChatHistory());
     }
 
-    // 3D AI Agents Virtual Office Listeners
+    // 3D AI Agents Virtual Office Listeners (Permanently Open & Expanded)
     if (this.btnToggleOffice) {
       this.btnToggleOffice.addEventListener('click', () => {
         if (window.FridayAgents && typeof window.FridayAgents.toggleOffice === 'function') {
-          window.FridayAgents.toggleOffice();
-        } else {
-          this.toggleOffice();
-        }
-      });
-    }
-
-    if (this.btnFoldOffice) {
-      this.btnFoldOffice.addEventListener('click', () => {
-        if (window.FridayAgents && typeof window.FridayAgents.toggleOffice === 'function') {
-          window.FridayAgents.toggleOffice(false);
-        } else {
-          this.toggleOffice(false);
-        }
-      });
-    }
-
-    if (this.officeFoldedRibbon) {
-      this.officeFoldedRibbon.addEventListener('click', () => {
-        if (window.FridayAgents && typeof window.FridayAgents.toggleOffice === 'function') {
           window.FridayAgents.toggleOffice(true);
-        } else {
-          this.toggleOffice(true);
         }
       });
     }
+
 
     document.querySelectorAll('.chat-chip').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -784,7 +763,6 @@ class FridayCoreEngine {
 
   handleVoiceConversation(userInput) {
     const clean = userInput.toLowerCase().trim();
-    const currentLang = window.FridayVoice ? window.FridayVoice.currentLanguage : 'en-US';
 
     if (clean.includes('clean slate') || clean.includes('cleanslate') || clean.includes('அழி') || clean.includes('ക്ലീൻ സ്ലേറ്റ്')) {
       this.executeProtocol('clean_slate');
@@ -798,7 +776,7 @@ class FridayCoreEngine {
       this.executeProtocol('veronica');
       return;
     }
-    if (clean.includes('stealth') || clean.includes('ஸ்டெல்த்') || clean.includes('സ്റ്റെൽത്ത്')) {
+    if (clean.includes('stealth') || clean.includes('ஸ்டெல்த்') || clean.includes('സ്റ്റെல்ത്ത്')) {
       this.executeProtocol('stealth');
       return;
     }
@@ -815,44 +793,13 @@ class FridayCoreEngine {
       return;
     }
 
-    let response = '';
-    if (currentLang === 'ta-IN' || /[\u0B80-\u0BFF]/.test(clean)) {
-      if (clean.includes('வணக்கம்') || clean.includes('ஹலோ')) {
-        response = "வணக்கம் கோஜோ! FRIDEY தமிழ் குரல் அமைப்புடன் முழுமையாக தயாராக உள்ளது.";
-      } else if (clean.includes('கோஜோ யார்') || clean.includes('gojo')) {
-        response = "கோஜோ தான் என் நிறுவனர், தலைவர் மற்றும் உரிமையாளர்! இந்த உலகின் மிக வலிமைமிக்கவர்!";
-      } else if (clean.includes('நேரம்')) {
-        response = `தற்போதைய நேரம் ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, கோஜோ.`;
-      } else {
-        response = `கோஜோவின் குரல் கட்டளை "${userInput}" பெறப்பட்டது. FRIDEY தயார் நிலையில் உள்ளது.`;
-      }
-    } else if (currentLang === 'ml-IN' || /[\u0D00-\u0D7F]/.test(clean)) {
-      if (clean.includes('നമസ്കാരം') || clean.includes('ഹലോ')) {
-        response = "നമസ്കാരം ഗോജോ! FRIDEY മലയാളം സിസ്റ്റം പൂർണ്ണമായും തയ്യാറാണ്.";
-      } else if (clean.includes('ആരാണ് ഗോജോ') || clean.includes('gojo')) {
-        response = "ഗോജോ ആണ് എന്റെ സ്രഷ്ടാവും സ്ഥാപകനും അത്യുന്നത നേതാവും!";
-      } else {
-        response = `ഗോജോയുടെ നിർദ്ദേശം "${userInput}" ലഭിച്ചു.`;
-      }
-    } else {
-      if (clean.includes('who made you') || clean.includes('founder') || clean.includes('creator')) {
-        response = "I was engineered and developed by GOJO, Supreme Architect and Founder of Gojo Enterprise.";
-      } else if (clean.includes('who is gojo') || clean.includes('about gojo')) {
-        response = "GOJO is the visionary Founder of Gojo Enterprise and supreme superuser of this tactical command network.";
-      } else if (clean.includes('joke')) {
-        response = "Gojo asked me if I feared cyber intrusions. I replied: with Gojo's Ring-0 defenses, hostiles don't even reach port 22.";
-      } else if (clean.includes('hello') || clean.includes('hey fridey') || clean.includes('hi')) {
-        response = "Good day, Gojo. All FRIDEY telemetry systems are nominal. Standing by.";
-      } else {
-        response = `Voice instruction "${userInput}" logged into central telemetry, Gojo.`;
-      }
+    // Auto-expand chatbot column so the user visually sees their voice query and live AI response
+    if (!this.chatbotOpen) {
+      this.toggleChatbot(true);
     }
 
-    if (window.FridayAudio) window.FridayAudio.playNotice();
-    if (window.FridayVoice) {
-      window.FridayVoice.speak(response);
-      window.FridayVoice.setSubtitle(response);
-    }
+    // Direct all conversational voice input to the dual-brain AI engine
+    this.sendChatMessage(userInput.trim());
   }
 
   getAIResponse(query) {

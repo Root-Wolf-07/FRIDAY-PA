@@ -3,7 +3,7 @@
  * Connects the unmodified FRIDAY HUD Frontend to the FastAPI AI Backend
  * 
  * Features:
- * - Dynamic Host & Origin Detection (supports :8000, :4173, or custom ports)
+ * - Multi-Target Auto-Discovery (probes localhost, 127.0.0.1, 10.0.2.2 for Android emulators, and 192.168.x for LAN)
  * - Live Health Telemetry & Status Indicator Sync
  * - Dual-Brain Chatbot AI Integration (dispatches real queries to /api/chat)
  * - Real Terminal Command Bridge (executes shell telemetry via /api/v1/terminal/sessions)
@@ -14,10 +14,39 @@
 (function () {
   'use strict';
 
-  // Determine Backend API Origin
-  const isDirectBackend = window.location.port === '8000' || window.location.pathname.startsWith('/api');
-  const BACKEND_BASE = isDirectBackend ? window.location.origin : 'http://localhost:8000';
-  const WS_BASE = BACKEND_BASE.replace(/^http/, 'ws');
+  // Extract Candidate Backend URLs across Desktop, Emulators, and Mobile Devices
+  function getCandidateUrls() {
+    const list = [];
+    try {
+      const saved = localStorage.getItem('friday_backend_url');
+      if (saved && saved.trim()) list.push(saved.trim().replace(/\/+$/, ''));
+    } catch (_) {}
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('backend');
+      if (q && q.trim()) list.push(q.trim().replace(/\/+$/, ''));
+    } catch (_) {}
+
+    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+      if (window.location.port === '8000') list.push(window.location.origin);
+      if (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        list.push(`${window.location.protocol}//${window.location.hostname}:8000`);
+      }
+    }
+
+    // Default connection endpoints
+    list.push('http://127.0.0.1:8000');
+    list.push('http://localhost:8000');
+    list.push('http://10.0.2.2:8000');        // Android emulator host gateway
+    list.push('http://192.168.3.232:8000');   // Host Mac LAN IP
+
+    // Deduplicate preserving priority
+    return Array.from(new Set(list));
+  }
+
+  let BACKEND_BASE = getCandidateUrls()[0] || 'http://localhost:8000';
+  let WS_BASE = BACKEND_BASE.replace(/^http/, 'ws');
 
   class FridayBackendBridge {
     constructor() {
@@ -26,12 +55,15 @@
       this.backendVersion = '0.1.0';
       this.conversationId = 'friday-hud-' + Math.random().toString(36).substring(2, 9);
       this.retryCount = 0;
+      this.backendBase = BACKEND_BASE;
+      this.wsBase = WS_BASE;
+      this.probing = false;
       
       this.init();
     }
 
     async init() {
-      console.log('%c[⚡ FRIDAY BACKEND BRIDGE]%c Initializing neural linkage to ' + BACKEND_BASE + '...', 
+      console.log('%c[⚡ FRIDAY BACKEND BRIDGE]%c Probing neural linkage endpoints...', 
         'background: #00f0ff; color: #040810; font-weight: bold; padding: 2px 6px; border-radius: 3px;', 
         'color: #00f0ff; font-weight: bold;');
       
@@ -42,32 +74,51 @@
       this.startHeartbeat();
     }
 
-    // Health Telemetry Check
+    // Health Telemetry Check with Automatic Multi-Candidate Fallback
     async checkBackendHealth() {
-      try {
-        const res = await fetch(`${BACKEND_BASE}/health/live`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
+      if (this.probing) return;
+      this.probing = true;
 
-        if (res.ok) {
-          const data = await res.json();
-          this.isConnected = true;
-          this.retryCount = 0;
-          this.updateHUDStatus(true, data);
-          return true;
-        } else {
-          this.updateHUDStatus(false);
-          return false;
+      const candidates = getCandidateUrls();
+      const ordered = [this.backendBase, ...candidates.filter(c => c !== this.backendBase)];
+
+      for (const target of ordered) {
+        if (!target) continue;
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 2500);
+          const res = await fetch(`${target}/health/live`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            signal: controller.signal
+          });
+          clearTimeout(timer);
+
+          if (res.ok) {
+            const data = await res.json();
+            this.backendBase = target;
+            BACKEND_BASE = target;
+            this.wsBase = target.replace(/^http/, 'ws');
+            WS_BASE = this.wsBase;
+            this.isConnected = true;
+            this.retryCount = 0;
+            try { localStorage.setItem('friday_backend_url', target); } catch (_) {}
+            this.updateHUDStatus(true, data);
+            this.probing = false;
+            return true;
+          }
+        } catch (_) {
+          // Probe next candidate silently
         }
-      } catch (err) {
-        this.isConnected = false;
-        this.updateHUDStatus(false);
-        return false;
       }
+
+      this.isConnected = false;
+      this.updateHUDStatus(false);
+      this.probing = false;
+      return false;
     }
 
-    // Update HUD Visual Pill
+    // Update HUD Visual Status Pill
     updateHUDStatus(online, healthData) {
       const statusText = document.getElementById('headerStatusText');
       const statusDot = document.getElementById('headerStatusDot');
@@ -75,20 +126,49 @@
 
       if (!statusText || !statusDot) return;
 
+      if (statusContainer && !statusContainer._hasConfigHook) {
+        statusContainer._hasConfigHook = true;
+        statusContainer.style.cursor = 'pointer';
+        statusContainer.addEventListener('click', () => {
+          const defaultOpt = this.backendBase || 'http://localhost:8000';
+          const msg = (
+            '⚡ FRIDAY TACTICAL NEURAL LINK\n\n' +
+            'Enter FastAPI Backend IP & Port:\n' +
+            '• 1 = http://localhost:8000 (Mac / iOS Simulator)\n' +
+            '• 2 = http://10.0.2.2:8000 (Android Studio Emulator)\n' +
+            '• 3 = http://192.168.3.232:8000 (Local Wi-Fi Network)\n\n' +
+            'Current: ' + defaultOpt
+          );
+          const entered = prompt(msg, defaultOpt);
+          if (entered !== null && entered.trim() !== '') {
+            let cleanUrl = entered.trim().replace(/\/+$/, '');
+            if (cleanUrl === '1') cleanUrl = 'http://localhost:8000';
+            else if (cleanUrl === '2') cleanUrl = 'http://10.0.2.2:8000';
+            else if (cleanUrl === '3') cleanUrl = 'http://192.168.3.232:8000';
+            else if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+              cleanUrl = 'http://' + cleanUrl;
+            }
+            try { localStorage.setItem('friday_backend_url', cleanUrl); } catch (_) {}
+            this.backendBase = cleanUrl;
+            BACKEND_BASE = cleanUrl;
+            this.wsBase = cleanUrl.replace(/^http/, 'ws');
+            WS_BASE = this.wsBase;
+            this.checkBackendHealth();
+          }
+        });
+      }
+
       if (online) {
-        statusText.innerHTML = 'SYSTEMS ONLINE <span style="color:#00ff88;font-size:10px;margin-left:4px;">● BACKEND LINKED</span>';
+        const displayHost = this.backendBase.replace(/^https?:\/\//, '');
+        statusContainer.title = `⚡ FRIDAY Backend Connected: ${this.backendBase} (Click to change IP)`;
+        statusText.innerHTML = `SYSTEMS ONLINE <span style="color:#00ff88;font-size:10px;margin-left:4px;">● LINKED (${displayHost})</span>`;
         statusDot.style.background = '#00ff88';
         statusDot.style.boxShadow = '0 0 10px #00ff88, 0 0 20px rgba(0,255,136,0.5)';
-        if (statusContainer) {
-          statusContainer.title = `FRIDAY AI Backend Connected (FastAPI v${this.backendVersion}) • Dual-Brain Orchestrator Active`;
-        }
       } else {
-        statusText.innerHTML = 'SYSTEMS ONLINE <span style="color:#ffaa00;font-size:10px;margin-left:4px;">● LOCAL CORE</span>';
+        statusContainer.title = '⚠️ Backend Disconnected. Click to configure Server IP.';
+        statusText.innerHTML = 'SYSTEMS ONLINE <span style="color:#00f0ff;font-size:10px;margin-left:4px;">● STANDALONE CORE</span>';
         statusDot.style.background = '#00f0ff';
         statusDot.style.boxShadow = '0 0 8px #00f0ff';
-        if (statusContainer) {
-          statusContainer.title = 'Running in Local Standalone Mode (Backend offline or connecting...)';
-        }
       }
     }
 
@@ -96,7 +176,7 @@
     startHeartbeat() {
       setInterval(async () => {
         await this.checkBackendHealth();
-      }, 15000);
+      }, 10000);
     }
 
     // Real-Time Chatbot Hook: Dispatches to /api/chat & coordinates 18 Agents
@@ -143,10 +223,11 @@
           // 4. Send to Backend API
           let backendSuccess = false;
           try {
+            const activeBase = this.backendBase || BACKEND_BASE;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            const timeoutId = setTimeout(() => controller.abort(), 35000);
 
-            const response = await fetch(`${BACKEND_BASE}/api/chat`, {
+            const response = await fetch(`${activeBase}/api/chat`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -205,16 +286,15 @@
               window.FridayCore.removeChatbotTyping(typingId);
               let reply = '';
 
-              // Local agent instruction handling
               if (collabMatch) {
                 reply = `⚡ **MULTI-AGENT COLLABORATION ENGAGED (LOCAL CORE):**\n\nCoupled AGENT-${collabMatch[1]} with AGENT-${collabMatch[2]} in virtual office. Synchronous laser data channel active.`;
               } else if (msgLower.includes('backend data') || msgLower.includes('take datas') || msgLower.includes('take data')) {
                 reply = `⚡ **FRIDAY BACKEND DATA ACCESS (LOCAL HUD BRIDGE):**\n\n` +
-                  `- **Target Backend URL:** \`${BACKEND_BASE}\`\n` +
+                  `- **Target Backend URL:** \`${this.backendBase}\`\n` +
                   `- **Status:** Connecting / Standalone Core Active\n` +
                   `- **HUD Matrix:** SYNCED (Frequency: 1420.405 MHz)\n` +
                   `- **18 Agents Office:** Online & Ready in Cabins 01-18\n` +
-                  `- *Start backend with \`./run_backend.sh\` to access full live FastAPI telemetry and dual-brain neural services.*`;
+                  `- *Click the status pill at the top of the HUD to verify or update the backend host IP address.*`;
               } else {
                 reply = window.FridayCore.getAIResponse(text);
               }
@@ -248,25 +328,23 @@
 
         const originalExecuteCommand = window.FridayCore.executeCommand.bind(window.FridayCore);
 
-        // Allow real backend execution for specific commands when connected
         window.FridayCore.executeCommand = async (rawCmd) => {
           const trimmed = (rawCmd || '').trim();
           const lower = trimmed.toLowerCase();
 
-          // Custom bridge commands
           if (lower === 'backend' || lower === 'api' || lower === 'backend status') {
+            const activeUrl = this.backendBase || BACKEND_BASE;
             const statusHtml = `
 <div class="term-line output-block">
   <span class="syn-header">─── [ FRIDAY FASTAPI AI BACKEND TELEMETRY ] ───</span>
-  <span class="syn-info">API URL:</span>        <span class="syn-highlight">${BACKEND_BASE}</span>
-  <span class="syn-info">CONNECTION:</span>     <span class="${this.isConnected ? 'syn-success' : 'syn-err'}">${this.isConnected ? 'ONLINE (ACTIVE)' : 'OFFLINE'}</span>
+  <span class="syn-info">API URL:</span>        <span class="syn-highlight">${activeUrl}</span>
+  <span class="syn-info">CONNECTION:</span>     <span class="${this.isConnected ? 'syn-success' : 'syn-err'}">${this.isConnected ? 'ONLINE (ACTIVE)' : 'STANDALONE (OFFLINE)'}</span>
   <span class="syn-info">CENTRAL BRAIN:</span>  <span class="syn-highlight">${this.modelName}</span>
   <span class="syn-info">LOCAL OLLAMA:</span>   <span class="syn-cyan">http://127.0.0.1:11434</span>
-  <span class="syn-info">SWAGGER DOCS:</span>   <span class="syn-cyan">${BACKEND_BASE}/docs</span>
-  <span class="syn-info">HEALTH CHECK:</span>   <span class="syn-cyan">${BACKEND_BASE}/health/live</span>
-  <span class="syn-info">TERMINAL API:</span>   <span class="syn-cyan">${BACKEND_BASE}/api/v1/terminal/sessions</span>
-  <span class="syn-info">CHATBOT API:</span>    <span class="syn-cyan">${BACKEND_BASE}/api/chat</span>
-  <span class="syn-info">18 AGENTS API:</span>  <span class="syn-cyan">${BACKEND_BASE}/api/v1/agents</span>
+  <span class="syn-info">SWAGGER DOCS:</span>   <span class="syn-cyan">${activeUrl}/docs</span>
+  <span class="syn-info">HEALTH CHECK:</span>   <span class="syn-cyan">${activeUrl}/health/live</span>
+  <span class="syn-info">CHATBOT API:</span>    <span class="syn-cyan">${activeUrl}/api/chat</span>
+  <span class="syn-info">18 AGENTS API:</span>  <span class="syn-cyan">${activeUrl}/api/v1/agents</span>
 </div>`;
             window.FridayCore.appendTerminalOutput(statusHtml);
             if (window.FridayCore.promptLine) window.FridayCore.promptLine.style.display = 'flex';
@@ -274,7 +352,6 @@
             return;
           }
 
-          // Let original local terminal handle all Gojo OS tactical commands
           return originalExecuteCommand(rawCmd);
         };
 
@@ -297,13 +374,12 @@
         const originalDispatch = window.FridayAgents.dispatchMission.bind(window.FridayAgents);
 
         window.FridayAgents.dispatchMission = async (taskText) => {
-          // Call original UI workflow first
           originalDispatch(taskText);
 
-          // If connected, sync mission to backend task dispatcher
           if (this.isConnected && taskText) {
             try {
-              fetch(`${BACKEND_BASE}/api/v1/agent_state`, {
+              const activeBase = this.backendBase || BACKEND_BASE;
+              fetch(`${activeBase}/api/v1/agent_state`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

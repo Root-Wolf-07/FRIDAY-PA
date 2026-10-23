@@ -39,10 +39,13 @@ graph TD
 ## 2. Android Installation Setup
 
 ### Method A: Install Pre-Built Signed APK (`dist/FRIDAY-AI.apk`) — RECOMMENDED
-A native, standalone Android package (`.apk`) is pre-compiled and signed in the repository ready for immediate installation.
+A complete, fully-featured native Android package (`.apk`) is assembled, 4-byte zipaligned, and cryptographically signed in the repository ready for immediate installation.
 
-- **File Location**: [`dist/FRIDAY-AI.apk`](file:///Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/dist/FRIDAY-AI.apk) *(Size: ~13 MB)*
-- **Package Architecture**: Embedded Chromium WebView engine pre-packaged with all tactical HUD assets, sounds, holographic canvas, and backend integration.
+- **File Location**: [`dist/FRIDAY-AI.apk`](file:///Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/dist/FRIDAY-AI.apk) *(Size: ~14.6 MB)*
+- **App Title**: **FRIDAY AI HUD** (Gojo Enterprise Tactical OS)
+- **App Icons**: Native high-res Arc Reactor adaptive & round icons across all screen densities (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi)
+- **Package Integrity**: 100% 4-Byte ZIP-Aligned (`zipalign 4`), cryptographically signed with 2048-bit RSA X.509 Certificate
+- **Package Architecture**: Embedded Chromium WebView engine pre-packaged with all tactical HUD assets, offline neural fallback, sound effects, holographic canvas, and dynamic Wi-Fi backend bridge.
 
 #### Option 1: Direct Download via Phone Browser (Easiest)
 1. Ensure the FRIDAY server is running on your computer:
@@ -58,15 +61,32 @@ A native, standalone Android package (`.apk`) is pre-compiled and signed in the 
 4. Tap the downloaded file, allow **"Install unknown apps"** if prompted, and tap **Install**.
 5. The **FRIDAY AI** app with the Arc Reactor icon is now installed in your app drawer!
 
-#### Option 2: Install via ADB (Android Debug Bridge / USB Cable)
-1. Connect your Android phone to your computer via USB with **USB Debugging** enabled.
-2. Run from the project directory:
-   ```bash
-   adb install -r dist/FRIDAY-AI.apk
-   ```
-3. The app is instantly pushed and installed on your device.
+#### Option 2: Install via ADB (Android Debug Bridge / USB Cable or Emulator)
+If you encountered `zsh: command not found: adb`, ensure Android SDK platform-tools are in your PATH:
+```bash
+# Added automatically to your ~/.zshrc:
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin:$PATH"
+source ~/.zshrc
+```
 
-#### Option 3: Transfer via Google Drive / AirDrop / USB File Transfer
+Connect your device or start the Android Studio Emulator, then run:
+```bash
+# 1-step runner script:
+./scripts/run-android.sh
+
+# Or manual adb commands:
+adb install -r dist/FRIDAY-AI.apk
+adb shell am start -n mgks.os.swv/.MainActivity
+```
+
+#### Option 3: Drag & Drop into Android Studio Emulator (Instant 1-Click)
+1. Open **Android Studio** (located at `/Applications/Android Studio.app`).
+2. Open **Tools > Device Manager** and click the ▶ **Play** button next to your virtual device (e.g. `Medium_Phone_API_37.0`).
+3. Drag and drop [`dist/FRIDAY-AI.apk`](file:///Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/dist/FRIDAY-AI.apk) directly into the running phone emulator window!
+4. The app installs automatically in seconds and appears in the app drawer.
+
+#### Option 4: Transfer via Google Drive / AirDrop / USB File Transfer
 1. Copy `dist/FRIDAY-AI.apk` to your phone via USB cable, Google Drive, Telegram, or WhatsApp.
 2. Tap the file in your phone's File Manager / Downloads folder and tap **Install**.
 
@@ -78,7 +98,25 @@ If you modify frontend assets or styles, you can re-generate the signed APK anyt
 
 ---
 
-### Method B: 1-Click Progressive Web App (PWA)
+### Method B: Native Android Studio Project (`android/`)
+A complete, native Android Studio project is ready in the repository for direct opening, debugging, and running in Android Studio:
+
+- **Project Location**: [`android/`](file:///Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/android)
+- **Package ID**: `com.gojo.friday.ai`
+- **SDK Target**: Android 14 / 15 / 16 (API 34-37, compileSdk 36, minSdk 24)
+
+#### How to Run in Android Studio:
+1. Open **Android Studio**.
+2. Click **File > Open...** and select:
+   `/Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/android`
+3. Wait for Gradle Sync to index the project.
+4. In the top toolbar device selector, pick your emulator (e.g., `Medium Phone API 37`) or a connected physical phone.
+5. Click the green **Run (▶)** button (or press `Shift + F10`).
+6. Android Studio will build and launch FRIDAY AI directly on your emulator/device!
+
+---
+
+### Method C: 1-Click Progressive Web App (PWA)
 No file download required. Runs in full-screen standalone mode with native system integration, offline asset caching, and an Arc Reactor home screen icon.
 
 1. **Start the FRIDAY Server** on your host computer or local network:
@@ -96,7 +134,7 @@ No file download required. Runs in full-screen standalone mode with native syste
 
 ---
 
-### Method C: Self-Hosted on Android via Termux (Standalone Phone Host)
+### Method D: Self-Hosted on Android via Termux (Standalone Phone Host)
 You can run the entire FastAPI backend and HUD directly on your Android phone without needing a computer:
 
 1. Install **Termux** from F-Droid.
@@ -109,27 +147,6 @@ You can run the entire FastAPI backend and HUD directly on your Android phone wi
    ./start.sh
    ```
 3. Open `http://localhost:8000` in your Android browser and tap **"Install App"**.
-
----
-
-### Method D: Compile Native Android Studio Project with Capacitor
-For developers who want to customize native Java/Kotlin Android components:
-
-1. Install Capacitor CLI dependencies:
-   ```bash
-   npm install @capacitor/core @capacitor/cli @capacitor/android
-   ```
-2. Initialize and copy web assets:
-   ```bash
-   npx cap add android
-   npx cap copy
-   ```
-3. Open project in **Android Studio**:
-   ```bash
-   npx cap open android
-   ```
-4. In Android Studio, click **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
-5. Install the generated `.apk` onto your phone.
 
 ---
 
@@ -156,20 +173,34 @@ Apple iOS fully supports FRIDAY as a standalone full-screen application with not
 
 ---
 
-### Method B: Native iOS Xcode App via Capacitor
-To package as an iOS app archive (`.ipa`) or install via TestFlight:
+### Method B: Native iOS Xcode App
+A fully configured, native Xcode project with Swift Package Manager and permissions is pre-built in the repository:
 
-1. On a Mac with Xcode installed:
+- **Xcode Project**: [`ios/App/App.xcodeproj`](file:///Users/student_02/.gemini/antigravity-ide/scratch/FRIDAY/ios/App/App.xcodeproj)
+- **Bundle Identifier**: `com.gojo.friday.ai`
+- **Architecture**: Swift Package Manager (`capacitor-swift-pm`), zero CocoaPods needed
+- **App Icons**: 1024x1024 Universal Arc Reactor AppIcon in `Assets.xcassets`
+- **Permissions Configured**: Microphone (`NSMicrophoneUsageDescription`), Speech Recognition (`NSSpeechRecognitionUsageDescription`), Camera (`NSCameraUsageDescription`), and Local Networking (`NSAppTransportSecurity`)
+
+#### How to Run in Xcode:
+1. **Launch Xcode & Open Project**:
    ```bash
-   npm install @capacitor/core @capacitor/cli @capacitor/ios
-   npx cap add ios
-   npx cap copy
+   ./scripts/run-ios-xcode.sh
+   # Or directly:
+   open -a Xcode ios/App/App.xcodeproj
    ```
-2. Open Xcode:
-   ```bash
-   npx cap open ios
-   ```
-3. Select your connected iPhone or iPad as the run destination and click **Build & Run** (▶).
+2. **Select Run Destination**:
+   In Xcode's top toolbar, click the device selector next to the **App** scheme and pick:
+   - Any **iOS Simulator** (e.g. *iPhone 16 Pro*, *iPad Pro*), OR
+   - Your connected physical **iPhone / iPad** (under *iOS Devices*).
+3. **Run the App**:
+   - Click the **▶ Play button** (or press **Cmd + R**).
+   - Xcode will compile Swift packages and launch FRIDAY AI in full-screen tactical HUD mode!
+4. **Code Signing for Physical Devices (Optional)**:
+   - If running on a physical iPhone/iPad, click **App** in the left Project Navigator.
+   - Go to **Signing & Capabilities** tab.
+   - Select your personal Apple ID under **Team** (free personal team works).
+   - Press **Cmd + R** to deploy directly to your phone.
 
 ---
 

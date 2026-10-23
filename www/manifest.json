@@ -1,0 +1,59 @@
+{
+  "name": "FRIDAY A.I. Tactical Defense Assistant",
+  "short_name": "FRIDAY AI",
+  "description": "Gojo Enterprise Tactical Defense HUD & Dual-Brain Autonomous AI Assistant",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#040810",
+  "theme_color": "#040810",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["productivity", "utilities", "security"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "AI Chatbot",
+      "short_name": "Chatbot",
+      "description": "Open FRIDAY AI Neural Chatbot",
+      "url": "/#panelChatbot",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "18 Agents Office",
+      "short_name": "Office",
+      "description": "Inspect 3D AI Agent Virtual Office & Cabins",
+      "url": "/#panelAgentOffice",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Live Backend Telemetry",
+      "short_name": "Telemetry",
+      "description": "Inspect Real-time Arc Reactor & Backend Telemetry",
+      "url": "/health/live",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

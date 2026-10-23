@@ -901,15 +901,22 @@ class FridayVoiceEngine {
 
       this.recognition.onresult = (event) => {
         let transcript = '';
+        let isFinal = false;
+        let finalTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
+          const piece = event.results[i][0].transcript;
+          transcript += piece;
+          if (event.results[i].isFinal) {
+            finalTranscript += piece;
+            isFinal = true;
+          }
         }
 
         this.setSubtitle(transcript);
 
-        if (event.results[0].isFinal) {
+        if (isFinal && finalTranscript.trim()) {
           if (this.onResultCallback) {
-            this.onResultCallback(transcript);
+            this.onResultCallback(finalTranscript.trim());
           }
         }
       };
@@ -1087,11 +1094,45 @@ class FridayVoiceEngine {
     }
   }
 
+  cleanForSpeech(raw) {
+    if (!raw) return '';
+    let clean = String(raw)
+      .replace(/```[\s\S]*?```/g, ' [code block omitted] ')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/#+\s*/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/[_~>|•]/g, '')
+      .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (clean.length > 280) {
+      const sentences = clean.split(/(?<=[.?!])\s+/);
+      let truncated = '';
+      for (const s of sentences) {
+        if ((truncated + ' ' + s).length <= 260) {
+          truncated += (truncated ? ' ' : '') + s;
+        } else {
+          break;
+        }
+      }
+      clean = truncated || clean.substring(0, 260) + '...';
+    }
+    return clean || raw;
+  }
+
   speak(text, onComplete) {
     if (!this.synthesis) {
       this.typeSubtitle(text);
       if (onComplete) onComplete();
       return;
+    }
+
+    // In Chrome/WebKit, ensure speech synthesis is not frozen or paused
+    if (this.synthesis.paused) {
+      try { this.synthesis.resume(); } catch (e) {}
     }
 
     // Temporarily pause speech recognition while speaking to prevent feedback loops
@@ -1101,13 +1142,14 @@ class FridayVoiceEngine {
     }
 
     // Cancel any ongoing speech
-    this.synthesis.cancel();
+    try { this.synthesis.cancel(); } catch (e) {}
 
     if (!this.selectedVoice) {
       this.selectBestFridayVoice();
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const clean = this.cleanForSpeech(text);
+    const utterance = new SpeechSynthesisUtterance(clean);
     if (this.selectedVoice) {
       utterance.voice = this.selectedVoice;
     }
@@ -1136,7 +1178,7 @@ class FridayVoiceEngine {
       this.isSpeaking = true;
       this.updateState('speaking');
       if (window.FridayCanvas) window.FridayCanvas.setMode('speaking');
-      this.typeSubtitle(text);
+      this.typeSubtitle(clean);
     };
 
     utterance.onend = resumeListeningIfDesired;
